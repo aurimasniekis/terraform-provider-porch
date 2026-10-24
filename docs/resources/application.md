@@ -79,7 +79,10 @@ output "jellyfin_client_secret" {
 - `disclosure` (Attributes) Optional claims released to the application. (see [below for nested schema](#nestedatt--disclosure))
 - `enabled` (Boolean) Whether the application accepts sign-ins. Default `true`.
 - `forward_headers` (Map of String) Identity headers sent to forward-auth backends (header name → `sub`, `email`, `name`, `groups`, `tenant` or `roles`); empty uses Porch's defaults.
+- `group` (String) Launcher section the application appears in (e.g. `Media`). Default: none.
 - `hosts` (Set of String) Hosts protected by a `forward_auth` application (at least one; lowercase). Must be empty for `oidc`.
+- `icon_ref` (String) The dashboard-icons name or image URL for `icon_source`.
+- `icon_source` (String) Where Porch takes the launcher icon from: `thesvg` (a [theSVG](https://thesvg.org) brand logo, `slug` or `slug/variant`, e.g. `github/mono`), `dashboard_icons` (a name from the [dashboard-icons](https://dashboardicons.com) set, e.g. `jellyfin`) or `url` (an https image). Porch downloads it, sanitizes SVGs and re-encodes other formats. `""` removes the icon. Unset: whatever the application has (an icon uploaded in the admin UI shows as `upload`).
 - `launch_url` (String) URL the launcher opens (http/https).
 - `secret_version` (String) Arbitrary value; changing it (including setting it for the first time, e.g. after an import) rotates the client secret and stores the new one. The old secret stops working immediately.
 

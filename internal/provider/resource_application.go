@@ -49,6 +49,9 @@ type applicationModel struct {
 	Disclosure     types.Object `tfsdk:"disclosure"`
 	Hosts          types.Set    `tfsdk:"hosts"`
 	ForwardHeaders types.Map    `tfsdk:"forward_headers"`
+	Group          types.String `tfsdk:"group"`
+	IconSource     types.String `tfsdk:"icon_source"`
+	IconRef        types.String `tfsdk:"icon_ref"`
 	Client         types.Object `tfsdk:"client"`
 	ClientID       types.String `tfsdk:"client_id"`
 	ClientSecret   types.String `tfsdk:"client_secret"`
@@ -140,6 +143,18 @@ func (r *applicationResource) Schema(_ context.Context, _ resource.SchemaRequest
 				Default: stringdefault.StaticString(""), Validators: []validator.String{stringvalidator.LengthAtMost(2048)}},
 			"enabled": schema.BoolAttribute{MarkdownDescription: "Whether the application accepts sign-ins. Default `true`.", Optional: true,
 				Computed: true, Default: booldefault.StaticBool(true)},
+			"group": schema.StringAttribute{MarkdownDescription: "Launcher section the application appears in (e.g. `Media`). Default: none.",
+				Optional: true, Computed: true, Default: stringdefault.StaticString(""), Validators: []validator.String{stringvalidator.LengthAtMost(64)}},
+			"icon_source": schema.StringAttribute{
+				MarkdownDescription: "Where Porch takes the launcher icon from: `thesvg` (a [theSVG](https://thesvg.org) brand logo, `slug` or " +
+					"`slug/variant`, e.g. `github/mono`), `dashboard_icons` (a name from the [dashboard-icons](https://dashboardicons.com) set, e.g. " +
+					"`jellyfin`) or `url` (an https image). Porch downloads it, sanitizes SVGs and re-encodes other formats. " +
+					"`\"\"` removes the icon. Unset: whatever the application has (an icon uploaded in the admin UI shows as `upload`).",
+				Optional: true, Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Validators: []validator.String{stringvalidator.OneOf("", "thesvg", "dashboard_icons", "url")}},
+			"icon_ref": schema.StringAttribute{MarkdownDescription: "The dashboard-icons name or image URL for `icon_source`.",
+				Optional: true, Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()},
+				Validators: []validator.String{stringvalidator.LengthAtMost(512)}},
 			"access_mode": schema.StringAttribute{
 				MarkdownDescription: "`all_members` (default: every active member of the tenant and of tenants it is shared with) or " +
 					"`assigned` (explicit `app:access` grants only).",
@@ -281,6 +296,9 @@ func (m *applicationModel) fill(a *client.Application) {
 	m.Disclosure = disclosureObject(a.Disclosure)
 	m.Hosts = setOf(a.Hosts)
 	m.ForwardHeaders = mapOf(a.ForwardHeaders)
+	m.Group = types.StringValue(a.Group)
+	m.IconSource = types.StringValue(a.IconSource)
+	m.IconRef = types.StringValue(a.IconRef)
 	if c := a.Client; c != nil {
 		m.Client = types.ObjectValueMust(oidcClientAttrTypes, map[string]attr.Value{
 			"client_type": types.StringValue(c.ClientType), "application_type": types.StringValue(c.ApplicationType),
@@ -314,7 +332,10 @@ func (r *applicationResource) Create(ctx context.Context, req resource.CreateReq
 	in := client.ApplicationCreate{Slug: plan.Slug.ValueString(), Name: plan.Name.ValueString(), Kind: plan.Kind.ValueString(),
 		Description: plan.Description.ValueString(), LaunchURL: plan.LaunchURL.ValueString(), AccessMode: plan.AccessMode.ValueString(),
 		Disclosure: disclosureFrom(ctx, plan.Disclosure, &resp.Diagnostics), Client: clientConfigFrom(ctx, plan.Client, &resp.Diagnostics),
-		ForwardHeaders: stringMapOf(ctx, plan.ForwardHeaders, &resp.Diagnostics)}
+		ForwardHeaders: stringMapOf(ctx, plan.ForwardHeaders, &resp.Diagnostics), Group: plan.Group.ValueString()}
+	if !plan.IconSource.IsUnknown() && !plan.IconSource.IsNull() && plan.IconSource.ValueString() != "" {
+		in.Icon = &client.Icon{Source: plan.IconSource.ValueString(), Ref: plan.IconRef.ValueString()}
+	}
 	if plan.Kind.ValueString() == "forward_auth" {
 		in.Hosts = stringsOf(ctx, plan.Hosts, &resp.Diagnostics)
 	}
@@ -404,6 +425,13 @@ func (r *applicationResource) Update(ctx context.Context, req resource.UpdateReq
 	}
 	if !plan.ForwardHeaders.Equal(state.ForwardHeaders) {
 		in.ForwardHeaders = ptr(stringMapOf(ctx, plan.ForwardHeaders, &resp.Diagnostics))
+	}
+	if !plan.Group.Equal(state.Group) {
+		in.Group = ptr(plan.Group.ValueString())
+	}
+	// Icons are sent only when they change, so an apply never makes Porch download them again.
+	if !plan.IconSource.IsUnknown() && (!plan.IconSource.Equal(state.IconSource) || !plan.IconRef.Equal(state.IconRef)) {
+		in.Icon = &client.Icon{Source: plan.IconSource.ValueString(), Ref: plan.IconRef.ValueString()}
 	}
 	if resp.Diagnostics.HasError() {
 		return

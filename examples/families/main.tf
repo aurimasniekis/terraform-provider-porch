@@ -208,6 +208,9 @@ resource "porch_application" "jellyfin" {
   kind        = "oidc"
   description = "Family movie night"
   launch_url  = "https://jellyfin.smith.example"
+  group       = "Media"
+  icon_source = "dashboard_icons"
+  icon_ref    = "jellyfin"
 
   disclosure = {
     groups = true
@@ -235,6 +238,7 @@ resource "porch_application" "photos" {
   slug        = "photos"
   name        = "Family photos"
   kind        = "forward_auth"
+  group       = "Media"
   access_mode = "assigned"
   hosts       = ["photos.smith.example"]
   launch_url  = "https://photos.smith.example"

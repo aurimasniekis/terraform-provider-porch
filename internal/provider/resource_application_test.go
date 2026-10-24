@@ -232,3 +232,56 @@ resource "porch_application_share" "s" {
 		},
 	})
 }
+
+// Launcher group and icon: Porch downloads the dashboard-icons PNG itself (needs internet access from Porch).
+func TestAccApplicationGroupAndIcon(t *testing.T) {
+	testAccPreCheck(t)
+	tslug := randSlug("ico")
+	cfg := func(extra string) string {
+		return tenantConfig(tslug) + fmt.Sprintf(`
+resource "porch_application" "a" {
+  tenant = porch_tenant.t.id
+  slug   = "grafana"
+  name   = "Grafana"
+  kind   = "forward_auth"
+  hosts  = [%q]
+  %s
+}
+`, tslug+".example.com", extra)
+	}
+	resource.ParallelTest(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: cfg(`group = "Monitoring"
+  icon_source = "dashboard_icons"
+  icon_ref = "grafana"`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("porch_application.a", "group", "Monitoring"),
+					resource.TestCheckResourceAttr("porch_application.a", "icon_source", "dashboard_icons"),
+					resource.TestCheckResourceAttr("porch_application.a", "icon_ref", "grafana"),
+				),
+			},
+			{
+				// Leaving the icon out of the configuration keeps it; changing the group does not download it again.
+				Config: cfg(`group = "Infrastructure"`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("porch_application.a", "group", "Infrastructure"),
+					resource.TestCheckResourceAttr("porch_application.a", "icon_source", "dashboard_icons"),
+				),
+			},
+			{
+				Config: cfg(`icon_source = ""
+  icon_ref = ""`),
+				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttr("porch_application.a", "group", ""),
+					resource.TestCheckResourceAttr("porch_application.a", "icon_source", ""),
+				),
+			},
+			{ResourceName: "porch_application.a", ImportState: true, ImportStateVerify: true,
+				ImportStateIdFunc:       importID("porch_application.a", "tenant", "id"),
+				ImportStateVerifyIgnore: []string{"client_secret", "secret_version"}},
+		},
+	})
+}

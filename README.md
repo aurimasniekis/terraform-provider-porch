@@ -5,7 +5,7 @@ memberships, upstream identity providers and domain enrollment, OIDC and forward
 shares), groups, roles, policies, resources, role assignments and service accounts.
 
 Built with [terraform-plugin-framework](https://github.com/hashicorp/terraform-plugin-framework) (protocol 6). Tested
-against Porch commit `4fb6c45` with Terraform 1.11.
+against Porch commit `9940962` with Terraform 1.11.
 
 ## Usage
 

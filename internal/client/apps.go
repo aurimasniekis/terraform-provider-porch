@@ -69,6 +69,10 @@ type Application struct {
 	Hosts          []string          `json:"hosts"`
 	ForwardHeaders map[string]string `json:"forward_headers"`
 	Client         *OIDCClient       `json:"client,omitempty"`
+	Group          string            `json:"group"`
+	IconSource     string            `json:"icon_source"`
+	IconRef        string            `json:"icon_ref"`
+	IconURL        string            `json:"icon_url"`
 	Version        int64             `json:"version"`
 	ETag           string            `json:"-"`
 	// ClientSecret is only set on create (and never on a replayed create).
@@ -87,6 +91,15 @@ type ApplicationCreate struct {
 	AccessMode     string            `json:"access_mode,omitempty"`
 	Hosts          []string          `json:"hosts,omitempty"`
 	ForwardHeaders map[string]string `json:"forward_headers,omitempty"`
+	Group          string            `json:"group,omitempty"`
+	Icon           *Icon             `json:"icon,omitempty"`
+}
+
+// Icon sets an application icon that Porch downloads: source url (an https image) or dashboard_icons (a name from the
+// dashboard-icons set); an empty source removes the icon.
+type Icon struct {
+	Source string `json:"source"`
+	Ref    string `json:"ref,omitempty"`
 }
 
 // ApplicationUpdate edits an application; nil fields are unchanged and client replaces the client configuration.
@@ -101,6 +114,8 @@ type ApplicationUpdate struct {
 	AccessMode     *string            `json:"access_mode,omitempty"`
 	Hosts          *[]string          `json:"hosts,omitempty"`
 	ForwardHeaders *map[string]string `json:"forward_headers,omitempty"`
+	Group          *string            `json:"group,omitempty"`
+	Icon           *Icon              `json:"icon,omitempty"`
 }
 
 // ClientSecret is a newly issued secret.
