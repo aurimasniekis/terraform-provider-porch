@@ -1,0 +1,20 @@
+# Build output and the exported Porch source used by the acceptance tests
+/bin/
+/.porch-src/
+/dist/
+
+# Terraform working files
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+.terraformrc
+terraform.rc
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
