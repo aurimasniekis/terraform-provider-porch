@@ -32,12 +32,17 @@ log:
   format: text
   level: warn
 YAML
-# Porch refuses unknown PORCH_* variables, so run it without the provider's environment.
-setup=$(env -u PORCH_ENDPOINT -u PORCH_TOKEN -u PORCH_CA_FILE "$porch" admin setup-token -config "$work/porch.yaml" 2>&1 |
-  grep -o 'porch_setup_[A-Za-z0-9_-]*')
-env -u PORCH_ENDPOINT -u PORCH_TOKEN -u PORCH_CA_FILE "$porch" serve -config "$work/porch.yaml" >"$work/porch.log" 2>&1 &
+# Porch refuses unknown PORCH_* variables (the provider's, CI's PORCH_COMMIT, ...), so run it without any of them.
+unset_porch=()
+while IFS= read -r v; do unset_porch+=(-u "$v"); done < <(compgen -e | grep '^PORCH_' || true)
+run_porch() { env ${unset_porch[@]+"${unset_porch[@]}"} "$porch" "$@"; }
+out=$(run_porch admin setup-token -config "$work/porch.yaml" 2>&1) || { echo "porch admin setup-token failed:"; echo "$out"; exit 1; }
+setup=$(grep -o 'porch_setup_[A-Za-z0-9_-]*' <<<"$out") || { echo "no setup token in output:"; echo "$out"; exit 1; }
+run_porch serve -config "$work/porch.yaml" >"$work/porch.log" 2>&1 &
 porch_pid=$!
-for _ in $(seq 1 50); do curl -sf "http://127.0.0.1:$MGMT/readyz" >/dev/null && break; sleep 0.2; done
+ready=false
+for _ in $(seq 1 50); do curl -sf "http://127.0.0.1:$MGMT/readyz" >/dev/null && { ready=true; break; }; sleep 0.2; done
+$ready || { echo "porch did not become ready:"; cat "$work/porch.log"; exit 1; }
 
 origin="http://localhost:$PUB"
 me=$(curl -sf -D "$work/headers" -X POST "$origin/api/v1/setup" -H "Origin: $origin" -H 'Content-Type: application/json' \
