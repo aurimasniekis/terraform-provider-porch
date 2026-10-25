@@ -4,8 +4,10 @@ Manage a [Porch](https://github.com/aurimasniekis/go-porch) installation (self-h
 memberships, upstream identity providers and domain enrollment, OIDC and forward-auth applications (and cross-tenant
 shares), groups, roles, policies, resources, role assignments and service accounts.
 
-Built with [terraform-plugin-framework](https://github.com/hashicorp/terraform-plugin-framework) (protocol 6). Tested
-against Porch commit `9940962` with Terraform 1.11.
+Built with [terraform-plugin-framework](https://github.com/hashicorp/terraform-plugin-framework) (protocol 6). Version
+0.1.0 is tested against [Porch 0.1.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.1.0) with Terraform
+1.11. Releases are published to the [Terraform Registry](https://registry.terraform.io/providers/aurimasniekis/porch)
+with GPG-signed checksums; see [CHANGELOG.md](CHANGELOG.md).
 
 ## Usage
 
@@ -13,7 +15,8 @@ against Porch commit `9940962` with Terraform 1.11.
 terraform {
   required_providers {
     porch = {
-      source = "aurimasniekis/porch"
+      source  = "aurimasniekis/porch"
+      version = "~> 0.1"
     }
   }
 }
@@ -128,6 +131,14 @@ provider_installation {
 
 With `dev_overrides`, skip `terraform init` (or add a `filesystem_mirror` for the provider, as
 [`scripts/verify-families.sh`](scripts/verify-families.sh) does).
+
+### Releasing
+
+Add the version's section to [CHANGELOG.md](CHANGELOG.md), point `PORCH_COMMIT` (Makefile and
+`.github/workflows/test.yml`) at the Porch release it was tested against, then push a `vX.Y.Z` tag. The
+[release workflow](.github/workflows/release.yml) runs the unit tests and [GoReleaser](.goreleaser.yml), signs the
+checksums with the release GPG key and creates a draft GitHub release; publishing it makes the version available in
+the Terraform Registry.
 
 ## License
 

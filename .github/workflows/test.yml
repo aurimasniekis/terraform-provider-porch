@@ -11,7 +11,7 @@ permissions:
 env:
   # Porch revision the acceptance tests run against.
   PORCH_REPOSITORY: aurimasniekis/go-porch
-  PORCH_COMMIT: 99409626cc586410a9963d91f6d5b54a8895f925
+  PORCH_COMMIT: e33dc75f75a82eb651a554457ba3a126e4614ff2
   TERRAFORM_VERSION: 1.11.4
 
 jobs:
