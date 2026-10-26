@@ -2,11 +2,11 @@
 
 Manage a [Porch](https://github.com/aurimasniekis/go-porch) installation (self-hosted IAM/SSO) as code: tenants, users and
 memberships, upstream identity providers and domain enrollment, OIDC and forward-auth applications (and cross-tenant
-shares), groups, roles, policies, resources, role assignments and service accounts.
+shares), groups, roles, policies, resources, role assignments, service accounts and automation tokens.
 
 Built with [terraform-plugin-framework](https://github.com/hashicorp/terraform-plugin-framework) (protocol 6). Version
-0.1.0 is tested against [Porch 0.1.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.1.0) with Terraform
-1.11. Releases are published to the [Terraform Registry](https://registry.terraform.io/providers/aurimasniekis/porch)
+0.2.0 is tested against [Porch 0.3.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.3.0) with Terraform
+1.11 (`porch_automation_token` needs Porch 0.3.0 or later). Releases are published to the [Terraform Registry](https://registry.terraform.io/providers/aurimasniekis/porch)
 with GPG-signed checksums; see [CHANGELOG.md](CHANGELOG.md).
 
 ## Usage
@@ -61,6 +61,7 @@ condition policy for the kids and a backup service account.
 | `porch_resource` | `<tenant>/<resource id>` |
 | `porch_policy` | `<tenant>/<policy id>` |
 | `porch_service_account` | `<tenant>/<service account id>` |
+| `porch_automation_token` | `installation/<token id>` or `<tenant>/<token id>` |
 
 Data sources: `porch_tenant` (by ID or slug), `porch_role` (by ID or slug, including the built-in `admin` and
 `member` roles), `porch_user` (by primary email), `porch_group` (by ID or slug).

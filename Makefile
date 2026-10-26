@@ -8,7 +8,7 @@ GOLANGCI_LINT ?= golangci-lint
 
 # Porch source the acceptance tests run against (exported read-only from a local checkout).
 PORCH_REPO    ?= ../porch
-PORCH_COMMIT  ?= e33dc75
+PORCH_COMMIT  ?= 9014040
 
 .DEFAULT_GOAL := help
 .PHONY: help build install test testacc lint fmt vet docs docs-check porch-src porch-bin families clean
