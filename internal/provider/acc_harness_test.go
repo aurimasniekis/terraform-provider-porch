@@ -33,7 +33,7 @@ import (
 // accEnv describes the Porch instance the acceptance tests run against.
 type accEnv struct {
 	Endpoint     string // public URL (http://localhost:PORT)
-	AdminToken   string // installation admin token
+	AdminToken   string // installation admin token (never expires, like an owner's Terraform token)
 	AuditorToken string // installation auditor token (read-only)
 	// Delegated is a tenant token of a non-operator member who holds only role:manage in DelegatedTenant ("" when the
 	// fake IdP is unavailable).
@@ -240,7 +240,7 @@ log:
 		Token string `json:"token"`
 	}
 	if err := owner.json(http.MethodPost, "/api/v1/installation/automation-tokens",
-		map[string]any{"name": "tf-acc", "role": "admin", "expires_in_days": 1}, &tok); err != nil {
+		map[string]any{"name": "tf-acc", "role": "admin", "never_expires": true}, &tok); err != nil {
 		return nil, stop, fmt.Errorf("admin token: %w", err)
 	}
 	env.AdminToken = tok.Token

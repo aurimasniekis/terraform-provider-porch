@@ -139,6 +139,7 @@ func (p *porchProvider) Resources(context.Context) []func() resource.Resource {
 		NewResourceResource,
 		NewPolicyResource,
 		NewServiceAccountResource,
+		NewAutomationTokenResource,
 	}
 }
 

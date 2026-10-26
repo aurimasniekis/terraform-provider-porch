@@ -45,8 +45,8 @@ func TestSchemasAreValid(t *testing.T) {
 			t.Errorf("%s has no id attribute", md.TypeName)
 		}
 	}
-	if len(seen) != 16 {
-		t.Errorf("got %d resources, want 16", len(seen))
+	if len(seen) != 17 {
+		t.Errorf("got %d resources, want 17", len(seen))
 	}
 	for _, f := range p.DataSources(ctx) {
 		d := f()
