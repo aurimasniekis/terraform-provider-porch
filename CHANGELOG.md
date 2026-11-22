@@ -5,6 +5,16 @@ All notable changes to this provider are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+
+- Built with Go 1.27.4, which fixes GO-2026-6859 in `net/http`.
+- Updated `golang.org/x/net` to v0.62.0, `google.golang.org/grpc` to v1.83.2 and `golang.org/x/text` to v0.43.0 to fix
+  the vulnerabilities reachable from the provider: GO-2026-6617, GO-2026-6612, GO-2026-6611, GO-2026-6603 and
+  GO-2026-5026 (`x/net`), GO-2026-6443, GO-2026-6348 and GO-2026-6061 (`grpc`), and GO-2026-5970 (`x/text`).
+  GO-2026-6866 and GO-2026-6860 in `x/net/html` are fixed as well; the provider does not reach them.
+- Updated `golang.org/x/crypto` to v0.58.0, which clears 13 GitHub advisories. None of them is reachable from the
+  provider.
+
 ## [0.2.0] - 2026-10-26
 
 For [Porch 0.3.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.3.0).
