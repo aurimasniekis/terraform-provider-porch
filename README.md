@@ -5,7 +5,7 @@ memberships, upstream identity providers and domain enrollment, OIDC and forward
 shares), groups, roles, policies, resources, role assignments, service accounts and automation tokens.
 
 Built with [terraform-plugin-framework](https://github.com/hashicorp/terraform-plugin-framework) (protocol 6). Version
-0.2.0 is tested against [Porch 0.3.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.3.0) with Terraform
+0.2.1 is tested against [Porch 0.3.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.3.0) with Terraform
 1.11 (`porch_automation_token` needs Porch 0.3.0 or later). Releases are published to the [Terraform Registry](https://registry.terraform.io/providers/aurimasniekis/porch)
 with GPG-signed checksums; see [CHANGELOG.md](CHANGELOG.md).
 

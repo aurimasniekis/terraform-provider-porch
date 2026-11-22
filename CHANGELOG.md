@@ -5,6 +5,14 @@ All notable changes to this provider are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-22
+
+For [Porch 0.3.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.3.0).
+
+### Security
+
+- Built with Go 1.27.4, which fixes GO-2026-6859 in the Go standard library.
+
 ### Security
 
 - Built with Go 1.27.4, which fixes GO-2026-6859 in `net/http`.
@@ -40,6 +48,7 @@ First release, for [Porch 0.1.0](https://github.com/aurimasniekis/go-porch/relea
 - Authenticates with a Porch automation token (installation or tenant scoped); changes a tenant token is not allowed
   to make fail with `privilege_escalation`.
 
-[Unreleased]: https://github.com/aurimasniekis/terraform-provider-porch/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/aurimasniekis/terraform-provider-porch/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/aurimasniekis/terraform-provider-porch/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/aurimasniekis/terraform-provider-porch/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/aurimasniekis/terraform-provider-porch/releases/tag/v0.1.0
