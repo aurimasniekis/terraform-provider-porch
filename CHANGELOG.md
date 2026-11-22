@@ -5,6 +5,10 @@ All notable changes to this provider are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Built with Go 1.27.4, which fixes GO-2026-6859 in `net/http`.
+
 ## [0.2.0] - 2026-10-26
 
 For [Porch 0.3.0](https://github.com/aurimasniekis/go-porch/releases/tag/v0.3.0).
